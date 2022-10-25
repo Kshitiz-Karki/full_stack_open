@@ -69,6 +69,14 @@ const App = () => {
             setNotificationType('')
           }, 5000)
       })
+      .catch(error => {
+        setNotification(error.response.data.error)
+            setNotificationType('error')
+            setTimeout(() => {
+              setNotification('')
+              setNotificationType('')
+            }, 5000)
+      })
     }
   }
 
