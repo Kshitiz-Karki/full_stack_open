@@ -1,6 +1,0 @@
-[submodule "part3/agile-sierra-08697"]
-	path = part3/agile-sierra-08697
-	url = https://git.heroku.com/agile-sierra-08697.git
-[submodule "part3/phonebook-backend/agile-sierra-08697"]
-	path = part3/phonebook-backend/agile-sierra-08697
-	url = https://git.heroku.com/agile-sierra-08697.git
