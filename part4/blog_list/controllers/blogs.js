@@ -12,24 +12,26 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
     if (!request.body.title || !request.body.url){
         response.status(400).end()
     }
+    else {
+        const body = request.body
 
-    const body = request.body
+        const user = request.user
 
-    const user = request.user
+        const blog = new Blog({
+            title: body.title,
+            author: body.author,
+            url: body.url,
+            likes: body.likes,
+            user: user.id
+        })
 
-    const blog = new Blog({
-        title: body.title,
-        author: body.author,
-        url: body.url,
-        likes: body.likes,
-        user: user.id
-    })
+        const savedBlog = await blog.save()
+        user.blogs = user.blogs.concat(savedBlog.id)
+        await user.save()
 
-    const savedBlog = await blog.save()
-    user.blogs = user.blogs.concat(savedBlog.id)
-    await user.save()
+        response.status(201).json(savedBlog)
+    }
 
-    response.status(201).json(savedBlog)
 })
 
 blogsRouter.get('/:id', async (request, response) => {
