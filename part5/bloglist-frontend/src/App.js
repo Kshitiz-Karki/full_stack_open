@@ -18,6 +18,7 @@ const App = () => {
   const [notificationType, setNotificationType] = useState('')
   const [rerenderBlogs, setRerenderBlogs] = useState(false)
 
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -53,7 +54,7 @@ const App = () => {
       setTimeout(() => {
         setNotification('')
         setNotificationType('')
-      }, 5000)
+      }, 10000)
     }
   }
 
@@ -94,7 +95,8 @@ const App = () => {
   }
 
   blogs.sort((a, b) => {
-    return a.likes - b.likes
+    //return a.likes - b.likes
+    return b.likes - a.likes
   })
 
   if (user === null) {
