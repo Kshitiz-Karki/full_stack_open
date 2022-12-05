@@ -4,13 +4,13 @@ import BlogForm from './BlogForm'
 import Blog from './Blog'
 
 const Home = ({
-    user,
+    //user,
     //handleLogout,
     blogFormRef,
     addBlog,
     blogs,
-    addLike,
-    deleteBlog,
+    //addLike,
+    //deleteBlog,
 }) => {
     return (
         <div>
@@ -24,10 +24,13 @@ const Home = ({
             {blogs.map((blog) => (
                 <Blog
                     key={blog.id}
-                    blog={blog}
-                    addLike={addLike}
-                    username={user.username}
-                    deleteBlog={deleteBlog}
+                    blogId={blog.id}
+                    title={blog.title}
+                    author={blog.author}
+                    //blog={blog}
+                    //addLike={addLike}
+                    //username={user.username}
+                    //deleteBlog={deleteBlog}
                 />
             ))}
         </div>

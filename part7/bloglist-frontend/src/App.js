@@ -10,6 +10,7 @@ import Notification from './components/Notification'
 import Users from './components/Users'
 import User from './components/User'
 import Home from './components/Home'
+import BlogDetails from './components/BlogDetails'
 import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom'
 
 import {
@@ -86,7 +87,9 @@ const App = () => {
     const addBlog = async (blogObject) => {
         try {
             blogFormRef.current.toggleVisibility()
+            console.log('blogObject - ', blogObject)
             const blog = await blogService.create(blogObject)
+
             setRerenderBlogs(!rerenderBlogs)
             dispatch(
                 setNotification(
@@ -115,17 +118,23 @@ const App = () => {
     })
 
     const users = useSelector((state) => state.users)
+    //const existingBlogs = useSelector((state) => state.blogs)
 
-    const match = useMatch('/users/:id')
-    const appUser = match
-        ? users.find((user) => user.id === match.params.id)
+    const matchUser = useMatch('/users/:id')
+    const appUser = matchUser
+        ? users.find((user) => user.id === matchUser.params.id)
         : null
-
     console.log('appUser - ', appUser)
+
+    const matchBlog = useMatch('/blogs/:id')
+    const blog = matchBlog
+        ? blogs.find((blog) => blog.id === matchBlog.params.id)
+        : null
+    console.log('blog - ', blog)
 
     if (user === null) {
         return (
-            <div>
+            <div className="container">
                 <Togglable buttonLabel="login">
                     <LoginForm
                         username={username}
@@ -150,19 +159,20 @@ const App = () => {
     //user, handleLogout, blogFormRef, addBlog, blogs
 
     return (
-        <div>
+        <div className="container">
             <div>
                 <Link style={padding} to="/">
                     Home
                 </Link>
-
                 <Link style={padding} to="/users">
                     Users
                 </Link>
+                {user.name} logged in
             </div>
+            <br />
             <h2>blogs</h2>
             <Notification />
-            {user.name} logged in
+
             <br />
             <br />
             <button onClick={handleLogout}>Log out</button>
@@ -180,17 +190,27 @@ const App = () => {
                     path="/"
                     element={
                         <Home
-                            user={user}
+                            //user={user}
                             //handleLogout={handleLogout}
                             blogFormRef={blogFormRef}
                             addBlog={addBlog}
                             blogs={blogs}
+                            //addLike={addLike}
+                            //deleteBlog={deleteBlog}
+                        />
+                    }
+                />
+                <Route path="/users/:id" element={<User user={appUser} />} />
+                <Route
+                    path="/blogs/:id"
+                    element={
+                        <BlogDetails
+                            blog={blog}
                             addLike={addLike}
                             deleteBlog={deleteBlog}
                         />
                     }
                 />
-                <Route path="/users/:id" element={<User user={appUser} />} />
             </Routes>
         </div>
     )
