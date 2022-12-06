@@ -45,8 +45,6 @@ const useResource = (baseUrl) => {
 }
 
 const Comments = ({ blogId }) => {
-    console.log('blogId - ', blogId)
-
     const comment = useField('text')
 
     const [comments, commentService] = useResource(
@@ -61,8 +59,6 @@ const Comments = ({ blogId }) => {
         event.preventDefault()
         commentService.create({ content: comment.value, blogId: blogId })
     }
-
-    console.log('comments - ', comments)
 
     return (
         <div>

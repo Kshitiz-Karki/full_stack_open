@@ -3,17 +3,10 @@ import Togglable from './Togglable'
 import BlogForm from './BlogForm'
 import Blog from './Blog'
 
-const Home = ({
-    //user,
-    //handleLogout,
-    blogFormRef,
-    addBlog,
-    blogs,
-    //addLike,
-    //deleteBlog,
-}) => {
+const Home = ({ blogFormRef, addBlog, blogs }) => {
     return (
         <div>
+            <h2>blogs</h2>
             <div>
                 <br />
                 <Togglable buttonLabel="New blog" ref={blogFormRef}>
@@ -27,10 +20,6 @@ const Home = ({
                     blogId={blog.id}
                     title={blog.title}
                     author={blog.author}
-                    //blog={blog}
-                    //addLike={addLike}
-                    //username={user.username}
-                    //deleteBlog={deleteBlog}
                 />
             ))}
         </div>

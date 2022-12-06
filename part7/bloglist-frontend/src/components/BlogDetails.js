@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import Comments from './Comments'
 
 const BlogDetails = ({ blog, addLike, deleteBlog }) => {
-    //if (blog === undefined) return null
-
     const [likes, setLikes] = useState(blog.likes)
 
     const handleAddLike = () => {
@@ -19,8 +17,6 @@ const BlogDetails = ({ blog, addLike, deleteBlog }) => {
         setLikes(likes + 1)
     }
 
-    //console.log('likes - ', likes)
-
     const navigate = useNavigate()
     const handleRemoveBlog = () => {
         if (window.confirm(`Remove blog ${blog.title} by ${blog.author} ?`)) {
@@ -31,6 +27,7 @@ const BlogDetails = ({ blog, addLike, deleteBlog }) => {
 
     return (
         <div>
+            <h2>blogs</h2>
             <h1>
                 {blog.title} - {blog.author}
             </h1>

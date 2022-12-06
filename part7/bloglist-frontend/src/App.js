@@ -1,11 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
-//import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
-//import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Users from './components/Users'
 import User from './components/User'
@@ -92,7 +90,6 @@ const App = () => {
     const addBlog = async (blogObject) => {
         try {
             blogFormRef.current.toggleVisibility()
-            console.log('blogObject - ', blogObject)
             const blog = await blogService.create(blogObject)
 
             setRerenderBlogs(!rerenderBlogs)
@@ -104,7 +101,6 @@ const App = () => {
             )
             dispatch(appendBlog(blogObject))
         } catch (exception) {
-            console.log('exception - ', exception)
             dispatch(setNotification('Incorrect blog details', 5))
         }
     }
@@ -129,13 +125,11 @@ const App = () => {
     const appUser = matchUser
         ? users.find((user) => user.id === matchUser.params.id)
         : null
-    console.log('appUser - ', appUser)
 
     const matchBlog = useMatch('/blogs/:id')
     const blog = matchBlog
         ? blogs.find((blog) => blog.id === matchBlog.params.id)
         : null
-    console.log('blog (match) - ', blog)
 
     if (user === null) {
         return (
@@ -164,8 +158,6 @@ const App = () => {
     const colorNav = {
         backgroundColor: '#D3D3D3',
     }
-
-    //user, handleLogout, blogFormRef, addBlog, blogs
 
     return (
         <div className="container">
@@ -201,37 +193,24 @@ const App = () => {
                             >
                                 Log out
                             </Button>
-                            {/*  <button onClick={handleLogout}>Log out</button> */}
                         </Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
 
             <br />
-            <h2>blogs</h2>
+
             <Notification />
 
             <Routes>
-                <Route
-                    path="/users/*"
-                    element={
-                        <Users
-                        //user={user}
-                        //handleLogout={handleLogout}
-                        />
-                    }
-                />
+                <Route path="/users/*" element={<Users />} />
                 <Route
                     path="/"
                     element={
                         <Home
-                            //user={user}
-                            //handleLogout={handleLogout}
                             blogFormRef={blogFormRef}
                             addBlog={addBlog}
                             blogs={blogs}
-                            //addLike={addLike}
-                            //deleteBlog={deleteBlog}
                         />
                     }
                 />
