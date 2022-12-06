@@ -13,6 +13,11 @@ import Home from './components/Home'
 import BlogDetails from './components/BlogDetails'
 import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom'
 
+import { Button } from 'react-bootstrap'
+
+import Nav from 'react-bootstrap/Nav'
+import Navbar from 'react-bootstrap/Navbar'
+
 import {
     setNotification,
     storeBlogs,
@@ -156,26 +161,56 @@ const App = () => {
         paddingRight: 5,
     }
 
+    const colorNav = {
+        backgroundColor: '#D3D3D3',
+    }
+
     //user, handleLogout, blogFormRef, addBlog, blogs
 
     return (
         <div className="container">
-            <div>
-                <Link style={padding} to="/">
-                    Home
-                </Link>
-                <Link style={padding} to="/users">
-                    Users
-                </Link>
-                {user.name} logged in
-            </div>
+            <Navbar
+                collapseOnSelect
+                expand="lg"
+                style={colorNav}
+                variant="dark"
+            >
+                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                <Navbar.Collapse id="responsive-navbar-nav">
+                    <Nav className="me-auto">
+                        <Nav.Link href="#" as="span">
+                            <Link style={padding} to="/">
+                                Home
+                            </Link>
+                        </Nav.Link>
+
+                        <Nav.Link href="#" as="span">
+                            <Link style={padding} to="/users">
+                                Users
+                            </Link>
+                        </Nav.Link>
+
+                        <Nav.Link href="#" as="span" style={{ color: 'black' }}>
+                            {user.name} logged in
+                        </Nav.Link>
+                        <Nav.Link href="#" as="span">
+                            <Button
+                                onClick={handleLogout}
+                                variant="primary"
+                                type="submit"
+                            >
+                                Log out
+                            </Button>
+                            {/*  <button onClick={handleLogout}>Log out</button> */}
+                        </Nav.Link>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
+
             <br />
             <h2>blogs</h2>
             <Notification />
 
-            <br />
-            <br />
-            <button onClick={handleLogout}>Log out</button>
             <Routes>
                 <Route
                     path="/users/*"

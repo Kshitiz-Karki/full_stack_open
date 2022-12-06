@@ -42,10 +42,10 @@ const BlogDetails = ({ blog, addLike, deleteBlog }) => {
                 </a>
                 <br />
                 <br />
-                {likes} likes &#20;
-                <button onClick={handleAddLike}>like</button> <br />
+                {likes} likes <button onClick={handleAddLike}>like</button>{' '}
                 <br />
-                Added by {blog.user.name}&#20;
+                <br />
+                Added by {blog.user.name}{' '}
                 <button onClick={handleRemoveBlog}>remove</button>
             </div>
         )
