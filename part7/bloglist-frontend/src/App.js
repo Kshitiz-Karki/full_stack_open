@@ -135,7 +135,7 @@ const App = () => {
     const blog = matchBlog
         ? blogs.find((blog) => blog.id === matchBlog.params.id)
         : null
-    console.log('blog - ', blog)
+    console.log('blog (match) - ', blog)
 
     if (user === null) {
         return (
@@ -236,14 +236,17 @@ const App = () => {
                     }
                 />
                 <Route path="/users/:id" element={<User user={appUser} />} />
+
                 <Route
                     path="/blogs/:id"
                     element={
-                        <BlogDetails
-                            blog={blog}
-                            addLike={addLike}
-                            deleteBlog={deleteBlog}
-                        />
+                        blog ? (
+                            <BlogDetails
+                                blog={blog}
+                                addLike={addLike}
+                                deleteBlog={deleteBlog}
+                            />
+                        ) : null
                     }
                 />
             </Routes>
