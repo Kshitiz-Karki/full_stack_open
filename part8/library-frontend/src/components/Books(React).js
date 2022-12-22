@@ -1,17 +1,9 @@
-import { BOOKS_BY_GENRE } from '../queries'
-import { useQuery } from '@apollo/client'
-
 const Books = ({ show, books, genre, setGenre }) => {
-	const booksByGenre = useQuery(BOOKS_BY_GENRE, {
-		variables: { genre },
-		pollInterval: 2000,
-	})
-
 	if (!show) {
 		return null
 	}
 
-	if (books.loading || booksByGenre.loading) {
+	if (books.loading) {
 		return <div>loading...</div>
 	}
 
@@ -37,14 +29,20 @@ const Books = ({ show, books, genre, setGenre }) => {
 						<th>published</th>
 						<th>genres</th>
 					</tr>
-					{booksByGenre.data.findBook.map((a) => (
-						<tr key={a.title}>
-							<td>{a.title}</td>
-							<td>{a.author.name}</td>
-							<td>{a.published}</td>
-							<td>{a.genres.join(', ')}</td>
-						</tr>
-					))}
+					{books.data.allBooks
+						.filter((book) =>
+							book.genres.includes(genre) || genre === 'all'
+								? true
+								: false
+						)
+						.map((a) => (
+							<tr key={a.title}>
+								<td>{a.title}</td>
+								<td>{a.author.name}</td>
+								<td>{a.published}</td>
+								<td>{a.genres.join(', ')}</td>
+							</tr>
+						))}
 				</tbody>
 			</table>
 			<br />

@@ -15,6 +15,7 @@ const NewBook = ({ show, createBook }) => {
 		event.preventDefault()
 
 		const publishedYear = parseInt(published)
+
 		createBook({ variables: { title, author, publishedYear, genres } })
 
 		setTitle('')
