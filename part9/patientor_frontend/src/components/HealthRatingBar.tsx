@@ -1,4 +1,3 @@
-import React from "react";
 import { Rating } from "@material-ui/lab";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import { withStyles } from "@material-ui/core";
@@ -33,8 +32,8 @@ const HealthRatingBar = ({ rating, showText }: BarProps) => {
         max={4}
         icon={<FavoriteIcon fontSize="inherit" />}
       />
-
-      {showText ? <p>{HEALTHBAR_TEXTS[rating]}</p> : null}
+      
+      {showText ? <p><i>Remarks: {HEALTHBAR_TEXTS[rating]}</i></p> : null}
     </div>
   );
 };
