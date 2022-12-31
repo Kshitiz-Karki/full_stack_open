@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { ErrorMessage, Field, FieldProps, FormikProps } from "formik";
 import {
   Select,
@@ -11,13 +11,11 @@ import { Diagnosis, Gender } from "../types";
 import { InputLabel } from "@material-ui/core";
 import Input from '@material-ui/core/Input';
 
-// structure of a single option
 export type GenderOption = {
   value: Gender;
   label: string;
 };
 
-// props for select field component
 type SelectFieldProps = {
   name: string;
   label: string;
@@ -74,7 +72,7 @@ interface NumberProps extends FieldProps {
 }
 
 export const NumberField = ({ field, label, min, max }: NumberProps) => {
-  const [value, setValue] = useState<number>();
+  const [value, setValue] = useState<number>(0);
 
   return (
     <div style={{ marginBottom: "1em" }}>
@@ -87,6 +85,7 @@ export const NumberField = ({ field, label, min, max }: NumberProps) => {
         value={value}
         onChange={(e) => {
           const value = parseInt(e.target.value);
+          if (isNaN(value)) setValue(min);
           if (value === undefined) return;
           if (value > max) setValue(max);
           else if (value <= min) setValue(min);

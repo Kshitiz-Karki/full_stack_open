@@ -1,8 +1,9 @@
+import React from "react";
 import { useEffect } from "react";
 
 import { apiBaseUrl } from "../constants";
 import axios from "axios";
-import { Patient } from "../types";
+import { Patient, NewEntry, EntryType } from "../types";
 import { useParams } from "react-router-dom";
 import { useStateValue } from "../state";
 
@@ -18,10 +19,59 @@ import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 
+import { Button } from "@material-ui/core";
+import AddEntryModal from '../AddEntryModal';
+
+
 
 const PatientPage = () => {
 
     const [ { patients } , dispatch] = useStateValue();
+
+    const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+    const [error, setError] = React.useState<string>();
+
+    const openModal = (): void => setModalOpen(true);
+
+    const closeModal = (): void => {
+        setModalOpen(false);
+        setError(undefined);
+    };
+
+    ////////////////////////////
+    const submitNewEntry = async (values: NewEntry) => {
+    const body = { ...values };
+
+    if (body.type === EntryType.OccupationalHealthCare) {
+      if (!body.sickLeave?.endDate && !body.sickLeave?.startDate) {
+        body.sickLeave = undefined;
+      }
+    }
+
+    try {
+      const { data: returnedPatient } = await axios.post<Patient>(
+        `${apiBaseUrl}/patients/${patient.id}/entries`,
+        body
+      );
+      dispatch(setPatient(returnedPatient));
+      closeModal();
+    } catch (e) {
+      console.error(e.response?.data);
+
+      let errorMessage = "Something went wrong!";
+
+      if (e.response?.status >= 400 && e.response?.status < 500) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        errorMessage = e.response.data.error;
+      }
+
+      setError(errorMessage);
+    }
+  };
+
+
+
+    ///////////////////////////
     
     const { id } = useParams<{ id: string }>();
     useEffect(() => {
@@ -62,6 +112,16 @@ const PatientPage = () => {
             </h2>
             <p><b>ssn:</b> {patient.ssn}</p>
             <p><b>occupation:</b> {patient.occupation}</p>
+
+            <AddEntryModal
+                modalOpen={modalOpen}
+                onSubmit={submitNewEntry}
+                error={error}
+                onClose={closeModal}
+            />
+            <Button variant="contained" onClick={() => openModal()}>
+                Add New Entry
+            </Button>
 
             {patient.entries && patient.entries.length > 0 && <h2>Entries</h2>}
             { patient.entries &&
