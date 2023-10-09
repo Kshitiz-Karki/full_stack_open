@@ -3,11 +3,11 @@ const PersonForm = ({
 	number,
 	onNameChange,
 	onNumberChange,
-	addName,
+	addPerson,
 }) => {
 	return (
 		<>
-			<form onSubmit={addName}>
+			<form onSubmit={addPerson}>
 				<div>
 					name:{' '}
 					<input

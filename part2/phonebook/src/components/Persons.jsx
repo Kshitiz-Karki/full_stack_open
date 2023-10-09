@@ -1,7 +1,7 @@
 import Person from './Person'
 import { nanoid } from 'nanoid'
 
-const Persons = ({ persons }) => {
+const Persons = ({ persons, deletePerson }) => {
 	return (
 		<>
 			{persons.map((person) => (
@@ -9,6 +9,8 @@ const Persons = ({ persons }) => {
 					key={nanoid()}
 					name={person.name}
 					number={person.number}
+					deletePerson={deletePerson}
+					id={person.id}
 				/>
 			))}
 		</>
