@@ -10,6 +10,7 @@ const App = () => {
 	const [countries, setCountries] = useState(null)
 	const [country, setCountry] = useState(null)
 	const [countryDetails, setCountryDetails] = useState({})
+	const [showCountry, setShowCountry] = useState(false)
 
 	useEffect(() => {
 		if (country) {
@@ -17,9 +18,7 @@ const App = () => {
 				.get(
 					`https://studies.cs.helsinki.fi/restcountries/api/name/${country}`
 				)
-				.then((response) => {
-					setCountryDetails(response.data)
-				})
+				.then((response) => setCountryDetails(response.data))
 		}
 	}, [country])
 
@@ -31,7 +30,12 @@ const App = () => {
 			})
 	}, [])
 
-	const handleUserInputChange = (event) => setUserInput(event.target.value)
+	const handleUserInputChange = (event) => {
+		setUserInput(event.target.value)
+		if (showCountry) {
+			setShowCountry(false)
+		}
+	}
 
 	const filteredCountries = () =>
 		countries
@@ -56,14 +60,19 @@ const App = () => {
 		)
 	}
 
-	if (filteredCountries().length === 1) {
-		if (country === null) {
+	if (filteredCountries().length === 1 || showCountry) {
+		if (
+			(country === null ||
+				country !== filteredCountries()[0].toLowerCase()) &&
+			!showCountry
+		) {
 			setCountry(filteredCountries()[0].toLowerCase())
 		} else {
 			return (
 				<>
 					{findCountries()}
-					{countryDetails.name ? (
+					{countryDetails.name &&
+					country === countryDetails.name.common.toLowerCase() ? (
 						<CountryDetails
 							name={countryDetails.name.common}
 							capital={countryDetails.capital}
@@ -77,6 +86,11 @@ const App = () => {
 		}
 	}
 
+	const showDetails = (name) => {
+		setCountry(name)
+		setShowCountry(true)
+	}
+
 	return (
 		<>
 			{findCountries()}
@@ -85,6 +99,7 @@ const App = () => {
 						<Country
 							key={nanoid()}
 							name={country}
+							showInfo={showDetails}
 						/>
 				  ))
 				: null}
