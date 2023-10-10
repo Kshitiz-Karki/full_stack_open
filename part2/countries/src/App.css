@@ -1,0 +1,10 @@
+.flagContainer {
+	width: 150px;
+	height: 120px;
+}
+
+/* Resize images */
+.flagContainer img {
+	width: 100%;
+	height: auto;
+}
