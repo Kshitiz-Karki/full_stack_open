@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid'
 import '../App.css'
+import WeatherDetails from './WeatherDetails'
 
 const CountryDetails = ({ name, capital, area, languages, flag }) => {
 	return (
@@ -16,6 +17,7 @@ const CountryDetails = ({ name, capital, area, languages, flag }) => {
 			<div className="flagContainer">
 				<img src={flag} />
 			</div>
+			<WeatherDetails capital={capital} />
 		</>
 	)
 }
