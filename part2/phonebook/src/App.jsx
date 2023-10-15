@@ -34,12 +34,24 @@ const App = () => {
 				personService
 					.update(personFound.id, personUpdated)
 					.then((updatedPerson) => {
+						// setPersons(
+						// 	persons
+						// 		.filter(
+						// 			(person) => person.id !== personFound.id
+						// 		)
+						// 		.concat(updatedPerson)
+						// )
 						setPersons(
-							persons
-								.filter(
-									(person) => person.id !== personFound.id
-								)
-								.concat(updatedPerson)
+							persons.map((person) => {
+								if (person.id === personFound.id) {
+									return {
+										...person,
+										number: updatedPerson.number,
+									}
+								} else {
+									return person
+								}
+							})
 						)
 					})
 					.catch((error) => {
