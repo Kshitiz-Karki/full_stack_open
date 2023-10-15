@@ -54,10 +54,12 @@ const App = () => {
 							})
 						)
 					})
-					.catch((error) => {
-						setErrorMessage(
-							`Information of ${personFound.name} has already been removed from server`
-						)
+					.catch((err) => {
+						let error = err.response.data.error
+						error = error.includes('Validation failed')
+							? err.response.data.error
+							: `Information of ${personFound.name} has already been removed from server`
+						setErrorMessage(error)
 						setTimeout(() => setErrorMessage(null), 5000)
 					})
 			}
@@ -66,11 +68,17 @@ const App = () => {
 				name: newName,
 				number: newNumber,
 			}
-			personService.create(newPerson).then((returnedPerson) => {
-				setPersons(persons.concat(returnedPerson))
-				setSucessMessage(`Added: ${newName} - ${newNumber}`)
-				setTimeout(() => setSucessMessage(null), 5000)
-			})
+			personService
+				.create(newPerson)
+				.then((returnedPerson) => {
+					setPersons(persons.concat(returnedPerson))
+					setSucessMessage(`Added: ${newName} - ${newNumber}`)
+					setTimeout(() => setSucessMessage(null), 5000)
+				})
+				.catch((error) => {
+					setErrorMessage(`${error.response.data.error}`)
+					setTimeout(() => setErrorMessage(null), 5000)
+				})
 		}
 		setNewName('')
 		setNewNumber('')
