@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+mongoose.set('bufferTimeoutMS', 10000)
 const supertest = require('supertest')
 const app = require('../app')
 
@@ -8,9 +9,6 @@ const helper = require('./test_helper')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
-
-
-
 
 beforeEach(async () => {
 	await Blog.deleteMany({})
@@ -172,6 +170,56 @@ describe('when there is initially one user in db', () => {
 
 		expect(result.body.error).toContain('expected `username` to be unique')
 
+		const usersAtEnd = await helper.usersInDb()
+		expect(usersAtEnd).toEqual(usersAtStart)
+	})
+})
+
+describe('invalid user is not created', () => {
+	test('username is not provided', async() => {
+		const usersAtStart = await helper.usersInDb()
+		const result = await api
+			.post('/api/users')
+			.send({ name: 'Jacob', password: 'sdaG623*4@Fw9' })
+			.expect(400)
+
+		expect(result.body.error).toContain('username must be given')
+		const usersAtEnd = await helper.usersInDb()
+		expect(usersAtEnd).toEqual(usersAtStart)
+	})
+
+	test('password is not provided', async() => {
+		const usersAtStart = await helper.usersInDb()
+		const result = await api
+			.post('/api/users')
+			.send({ name: 'Jacob', username: 'jacob.2023' })
+			.expect(400)
+
+		expect(result.body.error).toContain('password must be given')
+		const usersAtEnd = await helper.usersInDb()
+		expect(usersAtEnd).toEqual(usersAtStart)
+	})
+
+	test('username is less than 3 characters', async() => {
+		const usersAtStart = await helper.usersInDb()
+		const result = await api
+			.post('/api/users')
+			.send({ name: 'Jacob', username: 'ja', password: 'sdaG623*4@Fw9' })
+			.expect(400)
+
+		expect(result.body.error).toContain('username must be atleast 3 chars long')
+		const usersAtEnd = await helper.usersInDb()
+		expect(usersAtEnd).toEqual(usersAtStart)
+	})
+
+	test('password is less than 3 characters', async() => {
+		const usersAtStart = await helper.usersInDb()
+		const result = await api
+			.post('/api/users')
+			.send({ name: 'Jacob', username: 'jacob.2023', password: 'sd' })
+			.expect(400)
+
+		expect(result.body.error).toContain('password must be atleast 3 chars long')
 		const usersAtEnd = await helper.usersInDb()
 		expect(usersAtEnd).toEqual(usersAtStart)
 	})
