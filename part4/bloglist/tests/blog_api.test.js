@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-mongoose.set('bufferTimeoutMS', 10000)
 const supertest = require('supertest')
 const app = require('../app')
 
@@ -10,13 +9,26 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 
+mongoose.set('bufferTimeoutMS', 30000)
 beforeEach(async () => {
-	await Blog.deleteMany({})
+	await User.deleteMany({})
+	const passwordHash = await bcrypt.hash('sekret', 10)
+	const user = new User({ username: 'root', passwordHash })
+	await user.save()
 
+	let rootUser = await helper.getRootUser()
+	rootUser = rootUser.toJSON()
+
+	await Blog.deleteMany({})
 	for (let blog of helper.initialBlogs) {
+		blog.user = rootUser.id
 		let blogObject = new Blog(blog)
 		await blogObject.save()
 	}
+
+	const savedBlogs = await helper.blogsInDb()
+	const blogIds = savedBlogs.map(savedBlog => savedBlog.id)
+	await User.findByIdAndUpdate(rootUser.id, { blogs: blogIds }, { new: true })
 })
 
 describe('when there is initially some blogs saved', () => {
@@ -36,17 +48,21 @@ describe('when there is initially some blogs saved', () => {
 })
 
 describe('addition of a new blog', () => {
-	test('a valid blog can be added', async () => {
+	test('a valid blog with valid token can be added', async () => {
+		const loggedInUser = await api
+			.post('/api/login')
+			.send({ username: 'root', password: 'sekret' })
+
 		const newBlog = {
 			title: 'Canonical string reduction',
 			author: 'Edsger W. Dijkstra',
 			url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
-			likes: 12,
-			userId: '652e80214f774600f59da6e8'
+			likes: 12
 		}
 
 		await api
 			.post('/api/blogs')
+			.set('Authorization', `Bearer ${loggedInUser.body.token}`)
 			.send(newBlog)
 			.expect(201)
 			.expect('Content-Type', /application\/json/)
@@ -59,7 +75,25 @@ describe('addition of a new blog', () => {
 		)
 	})
 
+	test('adding a blog fails if token is not provided', async() => {
+		const newBlog = {
+			title: 'First class tests',
+			author: 'Robert C. Martin',
+			url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
+			likes: 10,
+		}
+
+		await api
+			.post('/api/blogs')
+			.send(newBlog)
+			.expect(401)
+	})
+
 	test('if the likes property is missing from the request, it will default to the value 0', async() => {
+		const loggedInUser = await api
+			.post('/api/login')
+			.send({ username: 'root', password: 'sekret' })
+
 		const newBlog = {
 			title: 'TDD harms architecture',
 			author: 'Robert C. Martin',
@@ -67,11 +101,18 @@ describe('addition of a new blog', () => {
 			userId: '652e80214f774600f59da6e8'
 		}
 
-		const response = await api.post('/api/blogs').send(newBlog)
+		const response = await api
+			.post('/api/blogs')
+			.send(newBlog)
+			.set('Authorization', `Bearer ${loggedInUser.body.token}`)
 		expect(response.body.likes).toBe(0)
 	})
 
 	test('blog without title or url is not added', async () => {
+		const loggedInUser = await api
+			.post('/api/login')
+			.send({ username: 'root', password: 'sekret' })
+
 		const newBlog = {
 			title: 'Type wars',
 			author: 'Robert C. Martin',
@@ -81,18 +122,24 @@ describe('addition of a new blog', () => {
 
 		await api
 			.post('/api/blogs')
+			.set('Authorization', `Bearer ${loggedInUser.body.token}`)
 			.send(newBlog)
 			.expect(400)
 	})
 })
 
-describe('addition of a new blog', () => {
+describe('deletion of a new blog', () => {
 	test('a blog can be deleted', async () => {
+		const loggedInUser = await api
+			.post('/api/login')
+			.send({ username: 'root', password: 'sekret' })
+
 		const blogsAtStart = await helper.blogsInDb()
 		const blogToDelete = blogsAtStart[0]
 
 		await api
 			.delete(`/api/blogs/${blogToDelete.id}`)
+			.set('Authorization', `Bearer ${loggedInUser.body.token}`)
 			.expect(204)
 
 		const blogsAtEnd = await helper.blogsInDb()
@@ -122,15 +169,6 @@ describe('updation of a new blog', () => {
 })
 
 describe('when there is initially one user in db', () => {
-	beforeEach(async () => {
-		await User.deleteMany({})
-
-		const passwordHash = await bcrypt.hash('sekret', 10)
-		const user = new User({ username: 'root', passwordHash })
-
-		await user.save()
-	})
-
 	test('creation succeeds with a fresh username', async () => {
 		const usersAtStart = await helper.usersInDb()
 

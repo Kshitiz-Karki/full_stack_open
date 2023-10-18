@@ -26,6 +26,10 @@ const usersInDb = async () => {
 	return users.map(u => u.toJSON())
 }
 
+const getRootUser = async() => {
+	return await User.findOne({ username: 'root' })
+}
+
 module.exports = {
-	initialBlogs, blogsInDb, usersInDb
+	initialBlogs, blogsInDb, usersInDb, getRootUser
 }
