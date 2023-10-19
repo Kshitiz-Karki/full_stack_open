@@ -72,21 +72,21 @@ const multipleBlogs = [
 ]
 
 describe('total likes', () => {
-	test('when list has only one blog, equals the likes of the same blog', () => {
+	test('when list has only one blog, equals the likes of that', () => {
 		expect(listHelper.totalLikes(listWithOneBlog)).toBe(5)
 	})
 
-	test('when list is empty, equals to 0', () => {
+	test('of empty list is 0', () => {
 		expect(listHelper.totalLikes(emptyBlogs)).toBe(0)
 	})
 
-	test('when list has more than one blog, equals to sum of likes of all the blogs', () => {
+	test('of a bigger list is calculated right', () => {
 		expect(listHelper.totalLikes(multipleBlogs)).toBe(36)
 	})
 })
 
 describe('favorite Blog', () => {
-	test('when list has only one blog, equals the same blog', () => {
+	test('when list has only one blog, equals the likes of that', () => {
 		expect(listHelper.favoriteBlog(listWithOneBlog)).toEqual({
 			title: 'Go To Statement Considered Harmful',
 			author: 'Edsger W. Dijkstra',
@@ -94,7 +94,7 @@ describe('favorite Blog', () => {
 		})
 	})
 
-	test('when list is empty, equals {}', () => {
+	test('of empty list is {}', () => {
 		expect(listHelper.favoriteBlog(emptyBlogs)).toEqual({})
 	})
 
@@ -103,6 +103,46 @@ describe('favorite Blog', () => {
 			title: 'Canonical string reduction',
 			author: 'Edsger W. Dijkstra',
 			likes: 12,
+		})
+	})
+})
+
+describe('most Blogs', () => {
+	test('when list has only one blog, equals to the author of the same blog', () => {
+		expect(listHelper.mostBlogs(listWithOneBlog)).toEqual({
+			author: 'Edsger W. Dijkstra',
+			blogs: 1
+		})
+	})
+
+	test('of empty list is {}', () => {
+		expect(listHelper.mostBlogs(emptyBlogs)).toEqual({})
+	})
+
+	test('when list has more than one blog, equals to the author that has maximum number of blogs', () => {
+		expect(listHelper.mostBlogs(multipleBlogs)).toEqual({
+			author: 'Robert C. Martin',
+			blogs: 3
+		})
+	})
+})
+
+describe('most Likes', () => {
+	test('when list has only one blog, equals to the author of the same blog', () => {
+		expect(listHelper.mostLikes(listWithOneBlog)).toEqual({
+			author: 'Edsger W. Dijkstra',
+			likes: 5
+		})
+	})
+
+	test('of empty list is {}', () => {
+		expect(listHelper.mostLikes(emptyBlogs)).toEqual({})
+	})
+
+	test('when list has more than one blog, equals to the author that has maximum number of likes', () => {
+		expect(listHelper.mostLikes(multipleBlogs)).toEqual({
+			author: 'Edsger W. Dijkstra',
+			likes: 17
 		})
 	})
 })
