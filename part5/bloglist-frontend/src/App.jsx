@@ -1,18 +1,17 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import './index.css'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
@@ -40,7 +39,13 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (error) {
-      setErrorMessage('wrong username or password')
+      let errorMessage = ''
+      if (error.message === 'Network Error'){
+        errorMessage = 'Service unavailable'
+      } else {
+        errorMessage = 'wrong username or password'
+      }
+      setErrorMessage(errorMessage)
       setTimeout(() => setErrorMessage(null), 5000)
     }
   }
@@ -50,17 +55,15 @@ const App = () => {
     setUser(null)
   }
 
-  const createNewBlog = async(event) => {
-    event.preventDefault()
-    const savedBlog = await blogService.create({ title, author, url })
-    // console.log(savedBlog)
+  const createNewBlog = async(blogObject) => {
+    blogFormRef.current.toggleVisibility()
+    const savedBlog = await blogService.create(blogObject)
     setBlogs([...blogs].concat(savedBlog))
     setErrorMessage(`a new blog ${savedBlog.title}! by ${savedBlog.author} added`)
     setTimeout(() => setErrorMessage(null), 5000)
-    setTitle('')
-    setAuthor('')
-    setUrl('')
   }
+
+  const blogFormRef = useRef()
 
   if(user === null){
     return (
@@ -96,34 +99,9 @@ const App = () => {
       <Notification message={errorMessage} type={'success'} />
       {user.name} logged in
       <button onClick={handleLogout}>logout</button>
-      <h2>create new</h2>
-      <form onSubmit={createNewBlog} >
-        <div>
-          title:
-          <input
-            type='text'
-            value={title}
-            name='Title'
-            onChange={event => setTitle(event.target.value)} />
-        </div>
-        <div>
-          author:
-          <input
-            type='text'
-            value={author}
-            name='Author'
-            onChange={event => setAuthor(event.target.value)} />
-        </div>
-        <div>
-          url:
-          <input
-            type='text'
-            value={url}
-            name='Url'
-            onChange={event => setUrl(event.target.value)} />
-        </div>
-        <button type='submit'>create</button>
-      </form>
+      <Togglable buttonLabel='new blog' ref={blogFormRef} >
+        <BlogForm createBlog={createNewBlog} />
+      </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
