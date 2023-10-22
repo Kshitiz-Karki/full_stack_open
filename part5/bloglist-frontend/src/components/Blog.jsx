@@ -15,22 +15,22 @@ const Blog = ({ blog, updateBlog, loggedInUserId, deleteBlog }) => {
 
   const removeButton = () => <button onClick={() => deleteBlog(blog.id, blog.title, blog.author)}>remove</button>
 
+  const toggleBlogVisibility = () => setBlogVisible(!blogVisible)
+
   return (
     <>
-      <div style={hideWhenVisible}>
+      <div style={hideWhenVisible} className='titleAndAuthor'>
         <div style={blogStyle}>
           <div>
             {blog.title} {blog.author}
-            <button onClick={() => setBlogVisible(true)}>view</button>
+            <button onClick={toggleBlogVisibility}>view</button>
           </div>
         </div>
       </div>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className='allDetails'>
         <div style={blogStyle}>
-          <div>
-            {blog.title} {blog.author}
-            <button onClick={() => setBlogVisible(false)}>hide</button>
-          </div>
+          {blog.title} {blog.author}
+          <button onClick={toggleBlogVisibility}>hide</button>
           <div>{blog.url}</div>
           <div>likes {blog.likes}
             <button onClick={() => updateBlog(blog.id, { likes: blog.likes+1 })}>like</button>
