@@ -90,6 +90,7 @@ const App = () => {
               type='text'
               value={username}
               name='Username'
+              id='username'
               onChange={(event) => setUsername(event.target.value)} />
           </div>
           <div>
@@ -98,9 +99,10 @@ const App = () => {
               type='password'
               value={password}
               name='Password'
+              id='password'
               onChange={(event) => setPassword(event.target.value)}  />
           </div>
-          <button type='submit'>login</button>
+          <button type='submit' id='login-button'>login</button>
         </form>
       </div>
     )
@@ -114,7 +116,7 @@ const App = () => {
       <Togglable buttonLabel='new blog' ref={blogFormRef} >
         <BlogForm createBlog={createNewBlog} />
       </Togglable>
-      {blogs.sort((a, b) => a.likes - b.likes)
+      {blogs.sort((a, b) => b.likes - a.likes)
         .map(blog => <Blog
           key={blog.id}
           blog={blog}
