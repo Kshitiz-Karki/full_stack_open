@@ -41,7 +41,7 @@ const App = () => {
 		countries
 			? countries.filter((country) =>
 					country.toLowerCase().includes(userInput.toLowerCase())
-			  )
+			)
 			: []
 
 	const findCountries = () => (
@@ -101,7 +101,7 @@ const App = () => {
 							name={country}
 							showInfo={showDetails}
 						/>
-				  ))
+				))
 				: null}
 		</>
 	)
