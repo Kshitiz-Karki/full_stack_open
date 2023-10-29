@@ -14,7 +14,6 @@ const Notification = ({ notification }) => {
       {notification}
     </div>
   )
-
 }
 
 export default Notification
