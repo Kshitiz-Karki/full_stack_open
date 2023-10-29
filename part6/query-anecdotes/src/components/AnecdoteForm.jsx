@@ -11,6 +11,10 @@ const AnecdoteForm = () => {
     onSuccess: newAnecdote => {
       const anecdotes = queryClient.getQueryData({ queryKey: ['anecdotes'] })
       queryClient.setQueryData({ queryKey: ['anecdotes'] }, anecdotes.concat(newAnecdote))
+    },
+    onError: error => {
+      dispatch({ type: 'SET', payload: error.message })
+      setInterval(() => dispatch({ type: 'CLEAR'}), 5000)
     }
   })
 
