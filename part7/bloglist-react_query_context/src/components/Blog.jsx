@@ -9,8 +9,6 @@ const Blog = ({ blog, updateBlog, loggedInUserId, deleteBlog }) => {
     marginBottom: 5
   }
 
-  // console.log('loggedInUserId - ', loggedInUserId)
-
   const [blogVisible, setBlogVisible] = useState(false)
   const hideWhenVisible = { display: blogVisible ? 'none' : '' }
   const showWhenVisible = { display: blogVisible ? '' : 'none' }

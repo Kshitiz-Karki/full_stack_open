@@ -7,24 +7,26 @@ import './index.css'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 
-import { useNotificationDispatch } from './NotificationContext'
+import { useNotificationDispatch, useUserDispatch, useUserValue } from './AppContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 const App = () => {
   const notificationDispatch = useNotificationDispatch()
+  const userDispatch = useUserDispatch()
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+
+  const user = useUserValue()
 
   useEffect(() => {
     const loggedInUser = window.localStorage.getItem('loggedInUser')
     if(loggedInUser){
       const user = JSON.parse(loggedInUser)
-      setUser(user)
+      userDispatch({ type: 'SET', payload: user })
       blogService.setToken(user.token)
     }
-  }, [])
+  }, [userDispatch])
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -32,7 +34,7 @@ const App = () => {
       const user = await loginService.login({ username, password })
       window.localStorage.setItem('loggedInUser', JSON.stringify(user))
       blogService.setToken(user.token)
-      setUser(user)
+      userDispatch({ type: 'SET', payload: user })
       setUsername('')
       setPassword('')
     } catch (error) {
@@ -49,7 +51,7 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedInUser')
-    setUser(null)
+    userDispatch({ type: 'CLEAR' })
   }
 
   const queryClient = useQueryClient()
