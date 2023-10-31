@@ -10,7 +10,6 @@ export const createAnecdote = ({ content, votes }) => {
     throw new Error('too short anecdote, must have length 5 or more');
   }
   return axios.post(baseUrl, { content, votes }).then(res => res.data)
-
 }
 
 export const updateAnecdote = ({ id, content, votes }) => 
