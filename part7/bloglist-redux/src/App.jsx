@@ -4,7 +4,7 @@ import './index.css'
 
 import { setNotification } from './reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
-import { initializeBlogs, createBlog, updateLikes, removeBlog } from './reducers/blogReducer'
+import { initializeBlogs, createBlog, updateLikes } from './reducers/blogReducer'
 import { login, logout, fetchUser } from './reducers/userReducer'
 
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
@@ -12,6 +12,7 @@ import Users from './components/Users'
 import Blogs from './components/Blogs'
 import { getAllUsers } from './reducers/allUsersReducer'
 import UserBlogs from './components/UserBlogs'
+import BlogInfo from './components/BlogInfo'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -25,7 +26,6 @@ const App = () => {
   }, [dispatch])
 
   const blogs = useSelector(state => state.blogs)
-  const users = useSelector(state => state.allUsers)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -54,12 +54,6 @@ const App = () => {
 
   const updateBlog = async(blogId) => {
     dispatch(updateLikes(blogId, blogs))
-  }
-
-  const deleteBlog = async(blogId, title, author) => {
-    if(window.confirm(`Remove blog ${title} by ${author}`)){
-      dispatch(removeBlog(blogId, blogs))
-    }
   }
 
   const blogFormRef = useRef()
@@ -99,28 +93,25 @@ const App = () => {
   }
 
   return (
-    <div>
-      <h2>blogs</h2>
-      <Notification type={'success'} />
-      {user.name} logged in
-      <button onClick={handleLogout}>logout</button>
-      <Router>
-        <div>
-          <Link style={padding} to="/">blogs</Link>
-          <Link style={padding} to="/users">users</Link>
-        </div>
-        <Routes>
-          <Route path="/users" element={<Users users={users} />} />
-          <Route path="/" element={
-            <Blogs
-              createNewBlog={createNewBlog}
-              blogFormRef={blogFormRef}
-              updateBlog={updateBlog}
-              deleteBlog={deleteBlog} />} />
-          <Route path="/users/:id" element={<UserBlogs users={users} />} />
-        </Routes>
-      </Router>
-    </div>
+    <Router>
+      <div>
+        <Link style={padding} to="/">blogs</Link>
+        <Link style={padding} to="/users">users</Link>
+        <Notification type={'success'} />
+        {user.name} logged in
+        <button onClick={handleLogout}>logout</button>
+        <h2>blog app</h2>
+      </div>
+      <Routes>
+        <Route path="/users" element={<Users />} />
+        <Route path="/users/:id" element={<UserBlogs />} />
+        <Route path="/" element={
+          <Blogs
+            createNewBlog={createNewBlog}
+            blogFormRef={blogFormRef} />} />
+        <Route path='/blogs/:id' element={<BlogInfo updateBlog={updateBlog} />} />
+      </Routes>
+    </Router>
   )
 }
 

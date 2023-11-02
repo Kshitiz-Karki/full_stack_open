@@ -14,7 +14,6 @@ const allUsersSlice = createSlice({
 export const getAllUsers = () => {
   return async dispatch => {
     const users = await userService.getAllUsers()
-    // console.log('users - ', users)
     dispatch(setAllUsers(users))
   }
 }
