@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getComments, saveComment } from '../reducers/commentsReducer'
+import { Form, Button } from 'react-bootstrap'
 
 const Comment = ({ content }) => {
   return (
@@ -29,10 +30,19 @@ const Comments = ({ blogId }) => {
   return (
     <>
       <h3>comments</h3>
-      <form onSubmit={addComment}>
-        <input type='text' value={comment} onChange={(event) => setComment(event.target.value)} />
-        <button>add comment</button>
-      </form>
+      <Form onSubmit={addComment}>
+        <Form.Group>
+          <Form.Control
+            type='text'
+            value={comment}
+            placeholder='comments...'
+            onChange={(event) => setComment(event.target.value)}
+          />
+          <Button className="float-end" variant="secondary" type="submit">
+            add comment
+          </Button>
+        </Form.Group>
+      </Form>
       <ul>
         {comments.map(comment =>
           <Comment

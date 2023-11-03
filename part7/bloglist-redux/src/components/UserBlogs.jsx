@@ -1,11 +1,12 @@
 import { useMatch } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { Table } from 'react-bootstrap'
 
 const BlogTitles = ({ title }) => {
   return (
-    <li>
-      {title}
-    </li>
+    <tr>
+      <td>{title}</td>
+    </tr>
   )
 }
 
@@ -21,13 +22,19 @@ const UserBlogs = () => {
   return (
     <>
       <h2>{user.name}</h2>
-      <h3>added blogs</h3>
-      <ul>
-        {user.blogs.map(blog =>
-          <BlogTitles
-            key={blog.id}
-            title={blog.title} />)}
-      </ul>
+      <Table striped>
+        <thead>
+          <tr>
+            <th>added blogs</th>
+          </tr>
+        </thead>
+        <tbody>
+          {user.blogs.map(blog =>
+            <BlogTitles
+              key={blog.id}
+              title={blog.title} />)}
+        </tbody>
+      </Table>
     </>
   )
 }

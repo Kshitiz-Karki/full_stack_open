@@ -1,6 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-import Notification from './components/Notification'
-import './index.css'
 
 import { setNotification } from './reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
@@ -14,7 +12,10 @@ import { getAllUsers } from './reducers/allUsersReducer'
 import UserBlogs from './components/UserBlogs'
 import BlogInfo from './components/BlogInfo'
 
+import { Form, Button, Alert, Navbar, Nav } from 'react-bootstrap'
+
 const App = () => {
+  const notification = useSelector(state => state.notification)
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -60,30 +61,38 @@ const App = () => {
 
   if(user === null){
     return (
-      <div>
+      <div className="container">
         <h2>Log in to application</h2>
-        <Notification type={'error'} />
-        <form onSubmit={handleLogin}>
-          <div>
-            username:
-            <input
+        {(notification &&
+          <Alert variant="warning">
+            {notification}
+          </Alert>
+        )}
+
+        <Form onSubmit={handleLogin}>
+          <Form.Group>
+            <Form.Label>username:</Form.Label>
+            <Form.Control
               type='text'
               value={username}
               name='Username'
               id='username'
-              onChange={(event) => setUsername(event.target.value)} />
-          </div>
-          <div>
-            password:
-            <input
+              onChange={(event) => setUsername(event.target.value)}
+            />
+            <Form.Label>password:</Form.Label>
+            <Form.Control
               type='password'
               value={password}
               name='Password'
               id='password'
-              onChange={(event) => setPassword(event.target.value)}  />
-          </div>
-          <button type='submit' id='login-button'>login</button>
-        </form>
+              onChange={(event) => setPassword(event.target.value)}
+            />
+            <br />
+            <Button variant="primary" type="submit" id='login-button'>
+            login
+            </Button>
+          </Form.Group>
+        </Form>
       </div>
     )
   }
@@ -93,25 +102,49 @@ const App = () => {
   }
 
   return (
-    <Router>
-      <div>
-        <Link style={padding} to="/">blogs</Link>
-        <Link style={padding} to="/users">users</Link>
-        <Notification type={'success'} />
-        {user.name} logged in
-        <button onClick={handleLogout}>logout</button>
-        <h2>blog app</h2>
-      </div>
-      <Routes>
-        <Route path="/users" element={<Users />} />
-        <Route path="/users/:id" element={<UserBlogs />} />
-        <Route path="/" element={
-          <Blogs
-            createNewBlog={createNewBlog}
-            blogFormRef={blogFormRef} />} />
-        <Route path='/blogs/:id' element={<BlogInfo updateBlog={updateBlog} />} />
-      </Routes>
-    </Router>
+    <div className="container">
+      <Router>
+        <div>
+          <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            <Navbar.Collapse id="responsive-navbar-nav">
+              <Nav className="me-auto">
+                <Nav.Link href="#" as="span">
+                  <Link style={padding} to="/">Blogs</Link>
+                </Nav.Link>
+                <Nav.Link href="#" as="span">
+                  <Link style={padding} to="/users">Users</Link>
+                </Nav.Link>
+              </Nav>
+            </Navbar.Collapse>
+          </Navbar>
+          <br />
+
+          {(notification &&
+          <Alert variant="success">
+            {notification}
+          </Alert>
+          )}
+
+          {user.name} logged in !
+          <Button className="float-end" variant="dark" onClick={handleLogout}>logout</Button>
+
+          <div style={{ textAlign:  'center' }}>
+            <h2>Blog App</h2>
+          </div>
+
+        </div>
+        <Routes>
+          <Route path="/users" element={<Users />} />
+          <Route path="/users/:id" element={<UserBlogs />} />
+          <Route path="/" element={
+            <Blogs
+              createNewBlog={createNewBlog}
+              blogFormRef={blogFormRef} />} />
+          <Route path='/blogs/:id' element={<BlogInfo updateBlog={updateBlog} />} />
+        </Routes>
+      </Router>
+    </div>
   )
 }
 

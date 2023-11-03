@@ -1,6 +1,7 @@
 import { useMatch } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Comments from './Comments'
+import { Button } from 'react-bootstrap'
 
 const BlogInfo = ({ updateBlog }) => {
   const match = useMatch('/blogs/:id')
@@ -16,7 +17,8 @@ const BlogInfo = ({ updateBlog }) => {
     <>
       <h2>{blog.title}</h2>
       <p><a href={blog.url}>{`${blog.url}`}</a></p>
-      {blog.likes} likes <button onClick={() => updateBlog(blog.id)}>like</button>
+      {blog.likes} likes <br />
+      <Button variant="secondary" onClick={() => updateBlog(blog.id)}>like</Button>
       <div>added by {blog.user.name}</div>
       <Comments blogId={blog.id} />
     </>
