@@ -8,15 +8,20 @@ const UpdateForm = ({ authorNames }) => {
   const [name, setName] = useState(null)
   let [born, setBorn] = useState('')
 
-  const [ updateBornYear ] = useMutation(EDIT_BIRTH_YEAR, {
-    refetchQueries: [ { query: ALL_AUTHORS } ]
+  const [ updateBornYear ] = useMutation(EDIT_BIRTH_YEAR,  {
+    update: (cache, response) => {
+      cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
+        const author = response.data.editAuthor.name
+        return {
+          allAuthors: allAuthors.filter(x => x.name !== author).concat(response.data.editAuthor),
+        }
+      })
+    },
   })
 
   const updateBirthYear = (event) => {  
     event.preventDefault()
     born = Number(born)
-    console.log('name - ', name)
-    console.log('born - ', born)
     if(name && born){
       updateBornYear({ variables: { name: name.value, setBornTo: born } })
     }

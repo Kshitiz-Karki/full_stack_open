@@ -5,9 +5,9 @@ import UpdateForm from './UpdateForm'
 const Authors = (props) => {
   const result = useQuery(ALL_AUTHORS)
 
-  if (!props.show) {
-    return null
-  }
+  // if (!props.show) {
+  //   return null
+  // }
 
   if (result.loading) {
     return <div>loading...</div>
@@ -15,27 +15,27 @@ const Authors = (props) => {
 
 
   const authors = result.data.allAuthors
-
+  // console.log('authors - ', authors)
   return (
     <div>
       <h2>authors</h2>
       <table>
         <tbody>
           <tr>
-            <th></th>
+            <th>name</th>
             <th>born</th>
-            <th>books</th>
+            {/* <th>books</th> */}
           </tr>
           {authors.map((a) => (
             <tr key={a.name}>
               <td>{a.name}</td>
               <td>{a.born}</td>
-              <td>{a.bookCount}</td>
+              {/* <td>{a.bookCount}</td> */}
             </tr>
           ))}
         </tbody>
       </table>
-      <UpdateForm authorNames={authors.map(x => x.name)} />
+      {props.token && <UpdateForm authorNames={authors.map(x => x.name)} />}
     </div>
   )
 }
