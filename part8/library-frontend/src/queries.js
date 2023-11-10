@@ -58,3 +58,36 @@ export const ME = gql`
   }
 }
 `
+
+const BOOK_DETAILS = gql`
+  fragment BookDetails on Book {
+   published
+    title
+    author {
+      name
+    }
+    genres
+  }
+`
+
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      ...BookDetails
+    }
+  }
+  ${BOOK_DETAILS}
+`
+
+export const BOOKS_BY_GENRE = gql`
+  query AllBooks($genre: String) {
+  allBooks(genre: $genre) {
+    author {
+      name
+    }
+    published
+    title
+    genres
+  }
+}
+`

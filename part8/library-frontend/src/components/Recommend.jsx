@@ -1,17 +1,15 @@
-import { ME, ALL_BOOKS } from "../queries"
+import { ME } from "../queries"
 import { useQuery } from '@apollo/client'
 import ShowBooks from "./ShowBooks"
 
-const Recommend = () => {
+const Recommend = ({ books }) => {
   const resultMe = useQuery(ME)
-  const resultBooks = useQuery(ALL_BOOKS)
 
-  if (resultMe.loading || resultBooks.loading) {
+  if (resultMe.loading) {
     return <div>loading...</div>
   }
 
   const me = resultMe.data.me
-  const books = resultBooks.data.allBooks
 
   return (
     <>

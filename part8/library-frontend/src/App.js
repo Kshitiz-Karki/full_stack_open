@@ -4,19 +4,41 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
 import { Route, Link, Routes } from 'react-router-dom'
-import { useMutation } from "@apollo/client"
-import { LOGIN } from './queries'
+import { useMutation, useSubscription, useApolloClient, useQuery } from "@apollo/client"
+import { LOGIN, BOOK_ADDED, ALL_BOOKS } from './queries'
 import Logout from './components/Logout'
 import Recommend from './components/Recommend'
+
+// function that takes care of manipulating cache
+export const updateBookCache = (cache, query, addedBook) => {
+  const uniqueByTitle = (a) => {
+    let seen = new Set()
+    return a.filter((item) => {
+      let k = item.title
+      return seen.has(k) ? false : seen.add(k)
+    })
+  }
+
+  cache.updateQuery(query, ({ allBooks }) => {
+    return {
+      allBooks: uniqueByTitle(allBooks.concat(addedBook)),
+    }
+  })
+}
 
 const App = () => {
   const [token, setToken] = useState(null)
   const [ login, result ] = useMutation(LOGIN)
-  // const [ login, result ] = useMutation(LOGIN, {
-  //   onError: (error) => {
-  //     setError(error.graphQLErrors[0].message)
-  //   }
-  // })
+
+  const books = useQuery(ALL_BOOKS)
+  const client = useApolloClient()
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      const addedBook = data.data.bookAdded
+      alert(`${addedBook.title} added`)
+      updateBookCache(client.cache, { query: ALL_BOOKS }, addedBook)
+    }
+  })
 
   useEffect(() => {
     const userToken = localStorage.getItem('user_token')
@@ -32,6 +54,13 @@ const App = () => {
       localStorage.setItem('user_token', token)
     }
   }, [result.data])
+
+  if(books.loading){
+    return <div>loading...</div>
+  }
+
+  const allBooks = books.data.allBooks
+  const genres = [...new Set(allBooks.map(book => book.genres).flat())]
 
   const padding = {
     paddingRight: 5
@@ -49,9 +78,9 @@ const App = () => {
       </div>
       <Routes>
         <Route path="/" element={<Authors token={token} />} />
-        <Route path="/books" element={<Books />} />
+        <Route path="/books" element={<Books genres={genres} />} />
         <Route path="/add-book" element={<NewBook token={token} />} />
-        <Route path="/recommend" element={<Recommend />} />
+        <Route path="/recommend" element={<Recommend books={allBooks} />} />
         <Route path="/login" element={<LoginForm login={login}/>} />
         <Route path="/logout" element={<Logout setToken={setToken} />} />                                      
       </Routes>
